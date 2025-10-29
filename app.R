@@ -2,6 +2,20 @@
 # Mpox Case Dashboard - DRC
 # ===============================================================
 
+# Load required packages
+suppressPackageStartupMessages({
+  library(shiny)
+  library(bslib)
+  library(thematic)
+  library(dplyr)
+  library(tidyr)
+  library(ggplot2)
+  library(readxl)
+  library(stringr)
+  library(forcats)
+  library(scales)
+})
+
 has_geo_packages <- FALSE
 tryCatch({
   suppressPackageStartupMessages({
