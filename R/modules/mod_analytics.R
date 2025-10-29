@@ -160,13 +160,11 @@ analytics_server <- function(id, filtered_data) {
     }, options = list(
       pageLength = 25,
       scrollX = TRUE,
-      dom = 'Bfrtip',
-      buttons = c('copy', 'csv'),
       searchHighlight = TRUE,
       columnDefs = list(
         list(className = 'dt-center', targets = 1:3)
       )
-    ), class = 'display hover stripe')
+    ))
 
     output$download_data <- downloadHandler(
       filename = function() {
