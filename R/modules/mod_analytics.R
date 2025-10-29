@@ -37,7 +37,7 @@ analytics_ui <- function(id) {
         card_body(
           downloadButton(ns("download_data"), "Export CSV",
                         class = "btn-sm btn-primary mb-3"),
-          dataTableOutput(ns("detailed_table"))
+          DT::dataTableOutput(ns("detailed_table"))
         )
       ),
       col_widths = 12
@@ -152,19 +152,44 @@ analytics_server <- function(id, filtered_data) {
         )
     })
 
-    output$detailed_table <- renderDataTable({
+    output$detailed_table <- DT::renderDataTable({
       filtered_data() %>%
         select(Province = province, Sex = sex,
                Age = case_age, `Age Group` = age_group) %>%
         head(1000)
-    }, options = list(
+    },
+    options = list(
       pageLength = 25,
       scrollX = TRUE,
-      searchHighlight = TRUE,
+      scrollY = "500px",
+      scrollCollapse = TRUE,
+      searching = TRUE,
+      ordering = TRUE,
+      info = TRUE,
+      autoWidth = TRUE,
       columnDefs = list(
-        list(className = 'dt-center', targets = 1:3)
+        list(className = 'dt-center', targets = 1:3),
+        list(width = '30%', targets = 0),
+        list(width = '20%', targets = 1:2),
+        list(width = '30%', targets = 3)
+      ),
+      language = list(
+        search = "Filter:",
+        lengthMenu = "Show _MENU_ entries",
+        info = "Showing _START_ to _END_ of _TOTAL_ cases",
+        paginate = list(
+          first = "First",
+          last = "Last",
+          `next` = "Next",
+          previous = "Previous"
+        )
       )
-    ))
+    ),
+    class = 'cell-border stripe hover',
+    rownames = FALSE,
+    filter = 'top',
+    selection = 'none'
+    )
 
     output$download_data <- downloadHandler(
       filename = function() {

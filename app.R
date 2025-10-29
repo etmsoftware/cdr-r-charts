@@ -14,6 +14,7 @@ suppressPackageStartupMessages({
   library(stringr)
   library(forcats)
   library(scales)
+  library(DT)
 })
 
 has_geo_packages <- FALSE

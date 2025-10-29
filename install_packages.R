@@ -6,6 +6,7 @@ packages <- c(
   "thematic",
   "tidyverse",
   "readxl",
+  "DT",
   "scales",
   "forcats",
   "stringi",
