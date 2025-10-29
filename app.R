@@ -2,7 +2,6 @@
 # Mpox Case Dashboard - DRC
 # ===============================================================
 
-# Load required packages
 suppressPackageStartupMessages({
   library(shiny)
   library(bslib)
