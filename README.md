@@ -77,12 +77,6 @@ cdr-r-chars/
 - **sf/geodata** - Geospatial mapping
 - **DT** - Interactive tables
 
-## 📖 Documentation
-
-- **[REFACTORING_SUMMARY.md](REFACTORING_SUMMARY.md)** - Complete technical documentation
-- Inline code comments in all modules
-- Function documentation with roxygen-style comments
-
 ## 🎨 Customization
 
 ### Change Colors
@@ -97,14 +91,6 @@ get_color_palette <- function() {
 1. Create module in `R/modules/mod_newtab.R`
 2. Define `newtab_ui()` and `newtab_server()`
 3. Source in `app.R` and add `nav_panel()`
-
-## 🚢 Deployment
-
-Ready for deployment to:
-- shinyapps.io
-- Posit Connect
-- Docker containers
-- Shiny Server
 
 ## 📝 License
 
