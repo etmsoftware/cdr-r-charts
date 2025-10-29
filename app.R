@@ -1,192 +1,215 @@
-# Load packages used by the app. Install missing packages, if needed.
-library(shiny)
-library(bslib)
-library(thematic)
-library(tidyverse)
-library(gitlink)
+# ===============================================================
+# Mpox Case Dashboard - DRC
+# ===============================================================
 
-# Read data from a CSV file and perform data preprocessing
-expansions <- read_csv("data/expansions.csv") |>
-  mutate(evaluation = factor(evaluation, levels = c("None", "A", "B")),
-         propensity = factor(propensity, levels = c("Good", "Average", "Poor")))
+has_geo_packages <- FALSE
+tryCatch({
+  suppressPackageStartupMessages({
+    library(sf)
+    library(geodata)
+    library(terra)
+  })
+  has_geo_packages <- TRUE
+}, error = function(e) {
+  message("Geospatial packages not available. Map will be disabled.")
+})
 
-# Compute expansion rates by trial and group
-expansion_groups <- expansions |>
-  group_by(industry, propensity, contract, evaluation) |>
-  summarize(success_rate = round(mean(outcome == "Won")* 100),
-            avg_amount = round(mean(amount)),
-            avg_days = round(mean(days)),
-            n = n()) |>
-  ungroup()
+source("R/utils/data_loader.R")
+source("R/utils/theme_config.R")
 
-# Compute expansion rates by trial
-overall_rates <- expansions |>
-  group_by(evaluation) |>
-  summarise(rate = round(mean(outcome == "Won"), 2))
+source("R/modules/mod_overview.R")
+source("R/modules/mod_age_analysis.R")
+source("R/modules/mod_geographic.R")
+source("R/modules/mod_analytics.R")
 
-# Restructure expansion rates by trial as a vector
-rates <- structure(overall_rates$rate, names = overall_rates$evaluation)
+dat <- load_case_data("data/complete_case_dataset_sim_final.xlsx")
 
-# Define lists for propensity, contract and industry choices
-propensities <- c("Good", "Average", "Poor")
-contracts <- c("Monthly", "Annual")
-industries <- c("Academia",
-                "Energy",
-                "Finance",
-                "Government",
-                "Healthcare",
-                "Insurance",
-                "Manufacturing",
-                "Non-Profit",
-                "Pharmaceuticals",
-                "Technology")
+filter_opts <- get_filter_options(dat)
 
-# Set the default theme for ggplot2 plots
-ggplot2::theme_set(ggplot2::theme_minimal())
-
-# Apply the CSS used by the Shiny app to the ggplot2 plots
-thematic_shiny()
-
-
-# Define the Shiny UI layout
-ui <- page_sidebar(
-  
-  # Set CSS theme
-  theme = bs_theme(bootswatch = "darkly",
-                   bg = "#222222",
-                   fg = "#86C7ED",
-                   success ="#86C7ED"),
-  
-  # Add title
-  title = "Effectiveness of DemoCo App Free Trial by Customer Segment",
-  
-  # Add sidebar elements
-  sidebar = sidebar(title = "Select a segment of data to view",
-                    class ="bg-secondary",
-                    selectInput("industry", "Select industries", choices = industries, selected = "", multiple  = TRUE),
-                    selectInput("propensity", "Select propensities to buy", choices = propensities, selected = "", multiple  = TRUE),
-                    selectInput("contract", "Select contract types", choices = contracts, selected = "", multiple  = TRUE),
-                    "This app compares the effectiveness of two types of free trials, A (30-days) and B (100-days), at converting users into customers.",
-                    tags$img(src = "logo.png", width = "100%", height = "auto")),
-  
-  # Layout non-sidebar elements
-  layout_columns(card(card_header("Conversions over time"),
-                      plotOutput("line")),
-                 card(card_header("Conversion rates"),
-                      plotOutput("bar")),
-                 value_box(title = "Recommended Trial",
-                           value = textOutput("recommended_eval"),
-                           theme_color = "secondary"),
-                 value_box(title = "Customers",
-                           value = textOutput("number_of_customers"),
-                           theme_color = "secondary"),
-                 value_box(title = "Avg Spend",
-                           value = textOutput("average_spend"),
-                           theme_color = "secondary"),
-                 card(card_header("Conversion rates by subgroup"),
-                      tableOutput("table")),
-                 col_widths = c(8, 4, 4, 4, 4, 12),
-                 row_heights = c(4, 1.5, 3))
-)
-
-# Define the Shiny server function
-server <- function(input, output) {
-  
-  # Provide default values for industry, propensity, and contract selections
-  selected_industries <- reactive({
-    if (is.null(input$industry)) industries else input$industry
+drc_sf <- NULL
+if (has_geo_packages) {
+  tryCatch({
+    drc_sf <- geodata::gadm(country = "COD", level = 1, path = tempdir()) %>%
+      st_as_sf() %>%
+      rename(province_gadm = NAME_1) %>%
+      mutate(province_gadm_norm = stringi::stri_trans_general(province_gadm, "Latin-ASCII") %>%
+               str_to_lower() %>%
+               str_replace_all("[^a-z0-9]+", " ") %>%
+               str_squish())
+  }, error = function(e) {
+    message("Could not load DRC shapefile.")
   })
-  
-  selected_propensities <- reactive({
-    if (is.null(input$propensity)) propensities else input$propensity
-  })
-  
-  selected_contracts <- reactive({
-    if (is.null(input$contract)) contracts else input$contract
-  })
-  
-  # Filter data against selections
-  filtered_expansions <- reactive({
-    expansions |>
-      filter(industry %in% selected_industries(),
-             propensity %in% selected_propensities(),
-             contract %in% selected_contracts())
-  })
-  
-  # Compute conversions by month
-  conversions <- reactive({
-    filtered_expansions() |>
-      mutate(date = floor_date(date, unit = "month")) |>
-      group_by(date, evaluation) |>
-      summarize(n = sum(outcome == "Won")) |>
-      ungroup()
-  })
-  
-  # Retrieve conversion rates for selected groups
-  groups <- reactive({
-    expansion_groups |>
-      filter(industry %in% selected_industries(),
-             propensity %in% selected_propensities(),
-             contract %in% selected_contracts())
-  })
-  
-  # Render text for recommended trial
-  output$recommended_eval <- renderText({
-    recommendation <-
-      filtered_expansions() |>
-      group_by(evaluation) |>
-      summarise(rate = mean(outcome == "Won")) |>
-      filter(rate == max(rate)) |>
-      pull(evaluation)
-    
-    as.character(recommendation[1])
-  })
-  
-  # Render text for number of customers
-  output$number_of_customers <- renderText({
-    sum(filtered_expansions()$outcome == "Won") |>
-      format(big.mark = ",")
-  })
-  
-  # Render text for average spend
-  output$average_spend <- renderText({
-    x <-
-      filtered_expansions() |>
-      filter(outcome == "Won") |>
-      summarise(spend = round(mean(amount))) |>
-      pull(spend)
-    
-    str_glue("${x}")
-  })
-  
-  # Render line plot for conversions over time
-  output$line <- renderPlot({
-    ggplot(conversions(), aes(x = date, y = n, color = evaluation)) +
-      geom_line() +
-      theme(axis.title = element_blank()) +
-      labs(color = "Trial Type")
-  })
-  
-  # Render bar plot for conversion rates by subgroup
-  output$bar <- renderPlot({
-    groups() |>
-      group_by(evaluation) |>
-      summarise(rate = round(sum(n * success_rate) / sum(n), 2)) |>
-      ggplot(aes(x = evaluation, y = rate, fill = evaluation)) +
-      geom_col() +
-      guides(fill = "none") +
-      theme(axis.title = element_blank()) +
-      scale_y_continuous(limits = c(0, 100))
-  })
-  
-  # Render table for conversion rates by subgroup
-  output$table <- renderTable({
-    groups() |>
-      select(industry, propensity, contract, evaluation, success_rate) |>
-      pivot_wider(names_from = evaluation, values_from = success_rate)
-  },
-  digits = 0)
 }
 
-# Create the Shiny app
+apply_modern_theme()
+thematic_shiny()
+
+ui <- page_navbar(
+  title = "Mpox Dashboard - DRC",
+  id = "main_nav",
+  theme = get_app_theme(),
+  fillable = TRUE,
+
+  sidebar = sidebar(
+    id = "sidebar",
+    title = tags$div(
+      style = "font-size: 1.2rem; font-weight: bold;",
+      "Filters"
+    ),
+
+    selectInput(
+      "province_filter",
+      "Provinces",
+      choices = filter_opts$provinces,
+      selected = filter_opts$provinces,
+      multiple = TRUE,
+      selectize = TRUE
+    ),
+
+    selectInput(
+      "sex_filter",
+      "Sex",
+      choices = filter_opts$sexes,
+      selected = "All",
+      multiple = FALSE
+    ),
+
+    sliderInput(
+      "age_filter",
+      "Age Range",
+      min = filter_opts$age_range[1],
+      max = filter_opts$age_range[2],
+      value = filter_opts$age_range,
+      step = 1,
+      post = " years"
+    ),
+
+    hr(),
+
+    tags$div(
+      class = "small text-muted",
+      style = "line-height: 1.5;",
+      "This dashboard provides comprehensive analysis of Mpox surveillance data ",
+      "from the Democratic Republic of Congo. Use filters to explore different ",
+      "segments of the data."
+    ),
+
+    tags$div(
+      style = "margin-top: 20px; text-align: center;",
+      tags$img(
+        src = "https://africacdc.org/wp-content/uploads/2020/02/AfricaCDC_Logo.png",
+        width = "80%",
+        style = "opacity: 0.8; border-radius: 8px;"
+      )
+    )
+  ),
+
+  nav_panel(
+    title = tagList(icon("house"), "Overview"),
+    value = "overview",
+    overview_ui("overview")
+  ),
+
+  nav_panel(
+    title = tagList(icon("chart-line"), "Age Analysis"),
+    value = "age_analysis",
+    age_analysis_ui("age_analysis")
+  ),
+
+  nav_panel(
+    title = tagList(icon("map"), "Geography"),
+    value = "geographic",
+    geographic_ui("geographic")
+  ),
+
+  nav_panel(
+    title = tagList(icon("table"), "Analytics"),
+    value = "analytics",
+    analytics_ui("analytics")
+  ),
+
+  nav_panel(
+    title = tagList(icon("info-circle"), "About"),
+    value = "about",
+    layout_columns(
+      card(
+        class = "border-0 shadow-sm",
+        card_header(
+          class = "bg-transparent border-0",
+          "About This Dashboard"
+        ),
+        card_body(
+          tags$h4("Mpox Case Surveillance Dashboard"),
+          tags$p(
+            "This interactive dashboard provides comprehensive visualization and ",
+            "analysis of Mpox (Monkeypox) case data from the Democratic Republic of Congo."
+          ),
+
+          tags$h5("Features"),
+          tags$ul(
+            tags$li("Interactive filtering by province, sex, and age"),
+            tags$li("Age-sex pyramid with population distribution"),
+            tags$li("Detailed age distribution analysis"),
+            tags$li("Geographic choropleth mapping"),
+            tags$li("Statistical summaries and data export")
+          ),
+
+          tags$h5("Data Source"),
+          tags$p(
+            "Case surveillance data from DRC health authorities. ",
+            "The dataset includes demographic and geographic information for ",
+            comma(nrow(dat)), " reported cases."
+          ),
+
+          tags$h5("Technical Stack"),
+          tags$ul(
+            tags$li(tags$strong("Framework: "), "Shiny with bslib"),
+            tags$li(tags$strong("Visualization: "), "ggplot2 with custom theme"),
+            tags$li(tags$strong("Geospatial: "), "sf, geodata, GADM boundaries"),
+            tags$li(tags$strong("Architecture: "), "Modular design with separate modules")
+          ),
+
+          tags$hr(),
+
+          tags$p(
+            class = "text-muted small",
+            "Dashboard version 2.0 | ",
+            "Last updated: ", Sys.Date()
+          )
+        )
+      ),
+      col_widths = 12
+    )
+  )
+)
+
+server <- function(input, output, session) {
+
+  filtered_data <- reactive({
+    data <- dat
+
+    if (!is.null(input$province_filter) && length(input$province_filter) > 0) {
+      data <- data %>% filter(province %in% input$province_filter)
+    }
+
+    if (input$sex_filter != "All") {
+      data <- data %>% filter(sex == input$sex_filter)
+    }
+
+    data <- data %>%
+      filter(
+        !is.na(case_age),
+        case_age >= input$age_filter[1],
+        case_age <= input$age_filter[2]
+      )
+
+    data
+  })
+
+  overview_server("overview", filtered_data)
+  age_analysis_server("age_analysis", filtered_data)
+  geographic_server("geographic", filtered_data, drc_sf)
+  analytics_server("analytics", filtered_data)
+}
+
 shinyApp(ui = ui, server = server)
