@@ -60,7 +60,7 @@ apply_modern_theme()
 thematic_shiny()
 
 ui <- page_navbar(
-  title = "Mpox Dashboard - DRC",
+  title = "Mpox Dashboard - DRC1",
   id = "main_nav",
   theme = get_app_theme(),
   fillable = TRUE,
