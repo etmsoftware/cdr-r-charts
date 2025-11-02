@@ -2,3 +2,14 @@
 .Rhistory
 .RData
 .Ruserdata
+
+# Environment variables and credentials
+.env
+.Renviron
+
+# Database connection files
+*.db
+*.sqlite
+
+# System files
+.DS_Store

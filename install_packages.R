@@ -13,7 +13,12 @@ packages <- c(
   "sf",
   "geodata",
   "terra",
-  "patchwork"
+  "patchwork",
+  "DBI",
+  "RPostgres",
+  "pool",
+  "config",
+  "jsonlite"
 )
 
 for (pkg in packages) {

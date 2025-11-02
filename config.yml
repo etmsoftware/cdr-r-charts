@@ -1,0 +1,29 @@
+default:
+  database:
+    host: "localhost"
+    port: 5432
+    dbname: "your_database_name"
+    user: "your_username"
+    password: "your_password"
+    view_name: "v_mpox_drc"
+    pool_size: 5
+
+development:
+  database:
+    host: !expr Sys.getenv("DB_HOST", "localhost")
+    port: !expr as.integer(Sys.getenv("DB_PORT", "5432"))
+    dbname: !expr Sys.getenv("DB_NAME", "mpox_db")
+    user: !expr Sys.getenv("DB_USER", "postgres")
+    password: !expr Sys.getenv("DB_PASSWORD")
+    view_name: "v_mpox_drc"
+    pool_size: 5
+
+production:
+  database:
+    host: !expr Sys.getenv("DB_HOST")
+    port: !expr as.integer(Sys.getenv("DB_PORT", "5432"))
+    dbname: !expr Sys.getenv("DB_NAME")
+    user: !expr Sys.getenv("DB_USER")
+    password: !expr Sys.getenv("DB_PASSWORD")
+    view_name: "v_mpox_drc"
+    pool_size: 10

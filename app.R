@@ -29,6 +29,7 @@ tryCatch({
   message("Geospatial packages not available. Map will be disabled.")
 })
 
+source("R/utils/db_connection.R")
 source("R/utils/data_loader.R")
 source("R/utils/theme_config.R")
 
@@ -37,7 +38,12 @@ source("R/modules/mod_age_analysis.R")
 source("R/modules/mod_geographic.R")
 source("R/modules/mod_analytics.R")
 
-dat <- load_case_data("data/complete_case_dataset_sim_final.xlsx")
+# Create database connection pool
+message("Initializing database connection...")
+db_pool <- create_db_pool()
+
+# Load data from database
+dat <- load_case_data(source = "database", db_pool = db_pool)
 
 filter_opts <- get_filter_options(dat)
 
@@ -199,6 +205,12 @@ ui <- page_navbar(
 )
 
 server <- function(input, output, session) {
+
+  # Close database connection when session ends
+  session$onSessionEnded(function() {
+    message("Shiny session ended, closing database connection...")
+    close_db_pool(db_pool)
+  })
 
   filtered_data <- reactive({
     data <- dat
