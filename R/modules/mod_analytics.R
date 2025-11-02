@@ -65,10 +65,10 @@ analytics_server <- function(id, filtered_data) {
         geom_density(alpha = 0.6, linewidth = 1.5) +
         geom_rug(aes(color = sex), alpha = 0.4, length = unit(0.03, "npc")) +
         scale_fill_manual(
-          values = c("Male" = pal["Male"], "Female" = pal["Female"])
+          values = c("Male" = pal[["Male"]], "Female" = pal[["Female"]])
         ) +
         scale_color_manual(
-          values = c("Male" = pal["Male"], "Female" = pal["Female"])
+          values = c("Male" = pal[["Male"]], "Female" = pal[["Female"]])
         ) +
         scale_x_continuous(breaks = seq(0, 100, 10)) +
         labs(
@@ -131,10 +131,10 @@ analytics_server <- function(id, filtered_data) {
           fill = "#FFFFFF"
         ) +
         scale_fill_manual(
-          values = c("Male" = pal["Male"], "Female" = pal["Female"])
+          values = c("Male" = pal[["Male"]], "Female" = pal[["Female"]])
         ) +
         scale_color_manual(
-          values = c("Male" = pal["Male"], "Female" = pal["Female"])
+          values = c("Male" = pal[["Male"]], "Female" = pal[["Female"]])
         ) +
         scale_y_continuous(breaks = seq(0, 100, 10)) +
         labs(

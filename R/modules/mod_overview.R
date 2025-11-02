@@ -112,7 +112,7 @@ overview_server <- function(id, filtered_data) {
           expand = expansion(mult = c(0.02, 0.02))
         ) +
         scale_fill_manual(
-          values = c("Male" = pal["Male"], "Female" = pal["Female"])
+          values = c("Male" = pal[["Male"]], "Female" = pal[["Female"]])
         ) +
         labs(
           title = "Population Distribution by Age and Sex",

@@ -85,10 +85,10 @@ age_analysis_server <- function(id, filtered_data) {
           shape = 18
         ) +
         scale_fill_manual(
-          values = c("Male" = pal["Male"], "Female" = pal["Female"], "Unknown" = pal["Unknown"])
+          values = c("Male" = pal[["Male"]], "Female" = pal[["Female"]], "Unknown" = pal[["Unknown"]])
         ) +
         scale_color_manual(
-          values = c("Male" = pal["Male"], "Female" = pal["Female"], "Unknown" = pal["Unknown"])
+          values = c("Male" = pal[["Male"]], "Female" = pal[["Female"]], "Unknown" = pal[["Unknown"]])
         ) +
         scale_y_continuous(
           breaks = seq(0, 100, 10),
@@ -129,7 +129,7 @@ age_analysis_server <- function(id, filtered_data) {
 
       ggplot(age_data, aes(x = age_group, y = n)) +
         geom_col(
-          fill = pal["primary"],
+          fill = pal[["primary"]],
           alpha = 0.9,
           width = 0.75
         ) +
