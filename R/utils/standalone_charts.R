@@ -57,103 +57,37 @@ get_standalone_chart_ui <- function(chart_name, ns = NS("standalone")) {
     ),
 
     # Overview - Pyramid
-    "pyramid" = card(
-      class = "border-0 shadow-sm",
-      full_screen = TRUE,
-      card_body(
-        plotOutput(ns("pyramid_plot"), height = "600px")
-      )
-    ),
+    "pyramid" = plotOutput(ns("pyramid_plot"), height = "600px"),
 
     # Overview - Summary
-    "overview_summary" = card(
-      class = "border-0 shadow-sm",
-      full_screen = TRUE,
-      card_body(
-        tableOutput(ns("summary_table"))
-      )
-    ),
+    "overview_summary" = tableOutput(ns("summary_table")),
 
     # Age Analysis - Violin Plot
-    "violin_plot" = card(
-      class = "border-0 shadow-sm",
-      full_screen = TRUE,
-      card_body(
-        plotOutput(ns("violin_plot"), height = "600px")
-      )
-    ),
+    "violin_plot" = plotOutput(ns("violin_plot"), height = "600px"),
 
     # Age Analysis - Age Group Bar
-    "age_group_bar" = card(
-      class = "border-0 shadow-sm",
-      full_screen = TRUE,
-      card_body(
-        plotOutput(ns("age_group_plot"), height = "550px")
-      )
-    ),
+    "age_group_bar" = plotOutput(ns("age_group_plot"), height = "550px"),
 
     # Age Analysis - Stats Table
-    "age_stats" = card(
-      class = "border-0 shadow-sm",
-      full_screen = TRUE,
-      card_body(
-        tableOutput(ns("age_stats_table"))
-      )
-    ),
+    "age_stats" = tableOutput(ns("age_stats_table")),
 
     # Geographic - Map
-    "map" = card(
-      class = "border-0 shadow-sm",
-      full_screen = TRUE,
-      card_body(
-        plotOutput(ns("map_plot"), height = "700px")
-      )
-    ),
+    "map" = plotOutput(ns("map_plot"), height = "700px"),
 
     # Geographic - Top Provinces
-    "top_provinces" = card(
-      class = "border-0 shadow-sm",
-      full_screen = TRUE,
-      card_body(
-        plotOutput(ns("top_provinces_plot"), height = "550px")
-      )
-    ),
+    "top_provinces" = plotOutput(ns("top_provinces_plot"), height = "550px"),
 
     # Geographic - Province Table
-    "province_table" = card(
-      class = "border-0 shadow-sm",
-      full_screen = TRUE,
-      card_body(
-        tableOutput(ns("province_stats_table"))
-      )
-    ),
+    "province_table" = tableOutput(ns("province_stats_table")),
 
     # Analytics - Density Curve
-    "density_curve" = card(
-      class = "border-0 shadow-sm",
-      full_screen = TRUE,
-      card_body(
-        plotOutput(ns("density_plot"), height = "550px")
-      )
-    ),
+    "density_curve" = plotOutput(ns("density_plot"), height = "550px"),
 
     # Analytics - Boxplot
-    "boxplot" = card(
-      class = "border-0 shadow-sm",
-      full_screen = TRUE,
-      card_body(
-        plotOutput(ns("boxplot_plot"), height = "550px")
-      )
-    ),
+    "boxplot" = plotOutput(ns("boxplot_plot"), height = "550px"),
 
     # Analytics - Data Table
-    "data_table" = card(
-      class = "border-0 shadow-sm",
-      full_screen = TRUE,
-      card_body(
-        DTOutput(ns("data_table"))
-      )
-    ),
+    "data_table" = DTOutput(ns("data_table")),
 
     # Default
     div(
@@ -177,18 +111,21 @@ create_standalone_ui <- function(chart_name, params) {
   page_fillable(
     title = title_text,
     theme = get_app_theme(),
-    padding = 15,
+    padding = 0,
+    fillable_mobile = TRUE,
 
     # Optional: Show title bar
     if (!params$hide_header) {
       div(
-        class = "mb-3",
-        style = "border-bottom: 2px solid #dee2e6; padding-bottom: 10px;",
-        h3(style = "margin: 0;", title_text)
+        style = "padding: 10px; margin: 0; background: transparent;",
+        h4(style = "margin: 0; font-weight: 600;", title_text)
       )
     },
 
-    # Chart content
-    get_standalone_chart_ui(chart_name, ns)
+    # Chart content - no padding, no background
+    div(
+      style = "width: 100%; height: 100%; margin: 0; padding: 0;",
+      get_standalone_chart_ui(chart_name, ns)
+    )
   )
 }
