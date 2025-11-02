@@ -62,8 +62,8 @@ analytics_server <- function(id, filtered_data) {
       pal <- get_color_palette()
 
       ggplot(plot_data, aes(x = case_age, fill = sex, color = sex)) +
-        geom_density(alpha = 0.4, linewidth = 1.2) +
-        geom_rug(aes(color = sex), alpha = 0.3, length = unit(0.03, "npc")) +
+        geom_density(alpha = 0.6, linewidth = 1.5) +
+        geom_rug(aes(color = sex), alpha = 0.4, length = unit(0.03, "npc")) +
         scale_fill_manual(
           values = c("Male" = pal["Male"], "Female" = pal["Female"])
         ) +

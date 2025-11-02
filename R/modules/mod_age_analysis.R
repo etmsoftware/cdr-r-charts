@@ -63,27 +63,31 @@ age_analysis_server <- function(id, filtered_data) {
       ggplot(plot_data, aes(x = sex, y = case_age, fill = sex)) +
         geom_violin(
           trim = FALSE,
-          alpha = 0.6,
+          alpha = 0.8,
           color = NA,
           scale = "width",
           width = 0.8
         ) +
         geom_boxplot(
+          aes(color = sex),
           width = 0.15,
-          alpha = 0.9,
+          alpha = 0.3,
           outlier.size = 1.5,
           outlier.alpha = 0.5,
-          color = "#333333",
-          fill = "#FFFFFF"
+          fill = "white",
+          linewidth = 0.8
         ) +
         stat_summary(
           fun = median,
           geom = "point",
-          size = 3,
+          size = 4,
           color = "#1A1A1A",
           shape = 18
         ) +
         scale_fill_manual(
+          values = c("Male" = pal["Male"], "Female" = pal["Female"], "Unknown" = pal["Unknown"])
+        ) +
+        scale_color_manual(
           values = c("Male" = pal["Male"], "Female" = pal["Female"], "Unknown" = pal["Unknown"])
         ) +
         scale_y_continuous(
