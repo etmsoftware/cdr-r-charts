@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>iFrame Embedding Test - Mpox Dashboard</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: #f5f7fa;
+        }
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        h1 {
+            color: #1a202c;
+            margin-bottom: 10px;
+        }
+        .subtitle {
+            color: #718096;
+            margin-bottom: 30px;
+        }
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        .chart-card {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+        .chart-header {
+            background: #1a202c;
+            color: white;
+            padding: 15px;
+            font-weight: 600;
+        }
+        .chart-body {
+            padding: 0;
+        }
+        iframe {
+            width: 100%;
+            border: none;
+            display: block;
+        }
+        .full-width {
+            grid-column: 1 / -1;
+        }
+        .code {
+            background: #2d3748;
+            color: #e2e8f0;
+            padding: 15px;
+            border-radius: 8px;
+            font-family: 'Courier New', monospace;
+            font-size: 12px;
+            overflow-x: auto;
+            margin-top: 10px;
+        }
+        .info-box {
+            background: #edf2f7;
+            border-left: 4px solid #3182ce;
+            padding: 15px;
+            margin-bottom: 20px;
+            border-radius: 4px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🦠 Mpox Dashboard - iFrame Embedding Test</h1>
+        <p class="subtitle">Testing standalone chart embedding with URL parameters</p>
+
+        <div class="info-box">
+            <strong>Note:</strong> Replace <code>http://127.0.0.1:5845</code> with your actual Shiny app URL.
+            These examples demonstrate various embedding options for integration with external dashboards.
+        </div>
+
+        <!-- Value Boxes Row -->
+        <h2>Value Boxes</h2>
+        <div class="grid">
+            <div class="chart-card">
+                <div class="chart-header">Total Cases</div>
+                <div class="chart-body">
+                    <iframe src="http://127.0.0.1:5845/?chart=total_cases&hide_header=true" height="150px"></iframe>
+                </div>
+                <div class="code">?chart=total_cases&hide_header=true</div>
+            </div>
+
+            <div class="chart-card">
+                <div class="chart-header">Male Cases</div>
+                <div class="chart-body">
+                    <iframe src="http://127.0.0.1:5845/?chart=male_cases&hide_header=true" height="150px"></iframe>
+                </div>
+                <div class="code">?chart=male_cases&hide_header=true</div>
+            </div>
+
+            <div class="chart-card">
+                <div class="chart-header">Female Cases</div>
+                <div class="chart-body">
+                    <iframe src="http://127.0.0.1:5845/?chart=female_cases&hide_header=true" height="150px"></iframe>
+                </div>
+                <div class="code">?chart=female_cases&hide_header=true</div>
+            </div>
+        </div>
+
+        <!-- Main Charts -->
+        <h2>Age-Sex Pyramid</h2>
+        <div class="grid">
+            <div class="chart-card full-width">
+                <div class="chart-header">Population Distribution</div>
+                <div class="chart-body">
+                    <iframe src="http://127.0.0.1:5845/?chart=pyramid&hide_header=true" height="600px"></iframe>
+                </div>
+                <div class="code">?chart=pyramid&hide_header=true</div>
+            </div>
+        </div>
+
+        <!-- Age Analysis -->
+        <h2>Age Analysis</h2>
+        <div class="grid">
+            <div class="chart-card">
+                <div class="chart-header">Age Distribution Violin Plot</div>
+                <div class="chart-body">
+                    <iframe src="http://127.0.0.1:5845/?chart=violin_plot&hide_header=true" height="550px"></iframe>
+                </div>
+                <div class="code">?chart=violin_plot&hide_header=true</div>
+            </div>
+
+            <div class="chart-card">
+                <div class="chart-header">Age Group Distribution</div>
+                <div class="chart-body">
+                    <iframe src="http://127.0.0.1:5845/?chart=age_group_bar&hide_header=true" height="500px"></iframe>
+                </div>
+                <div class="code">?chart=age_group_bar&hide_header=true</div>
+            </div>
+        </div>
+
+        <!-- With Filters -->
+        <h2>Charts with Filters</h2>
+        <div class="grid">
+            <div class="chart-card">
+                <div class="chart-header">Pyramid - South Kivu Only</div>
+                <div class="chart-body">
+                    <iframe src="http://127.0.0.1:5845/?chart=pyramid&provinces=SOUTH_KIVU&hide_header=true" height="600px"></iframe>
+                </div>
+                <div class="code">?chart=pyramid&provinces=SOUTH_KIVU&hide_header=true</div>
+            </div>
+
+            <div class="chart-card">
+                <div class="chart-header">Violin Plot - Males Only</div>
+                <div class="chart-body">
+                    <iframe src="http://127.0.0.1:5845/?chart=violin_plot&sex=Male&hide_header=true" height="550px"></iframe>
+                </div>
+                <div class="code">?chart=violin_plot&sex=Male&hide_header=true</div>
+            </div>
+        </div>
+
+        <!-- Statistics Tables -->
+        <h2>Statistics Tables</h2>
+        <div class="grid">
+            <div class="chart-card">
+                <div class="chart-header">Overview Summary</div>
+                <div class="chart-body">
+                    <iframe src="http://127.0.0.1:5845/?chart=overview_summary&hide_header=true" height="300px"></iframe>
+                </div>
+                <div class="code">?chart=overview_summary&hide_header=true</div>
+            </div>
+
+            <div class="chart-card">
+                <div class="chart-header">Age Statistics</div>
+                <div class="chart-body">
+                    <iframe src="http://127.0.0.1:5845/?chart=age_stats&hide_header=true" height="250px"></iframe>
+                </div>
+                <div class="code">?chart=age_stats&hide_header=true</div>
+            </div>
+        </div>
+
+        <div class="info-box" style="margin-top: 40px;">
+            <strong>Integration Instructions:</strong>
+            <ul>
+                <li>Copy any iframe URL above</li>
+                <li>Paste into your external dashboard (Superset, Tableau, etc.)</li>
+                <li>Adjust height as needed for your layout</li>
+                <li>Add filter parameters to sync with your dashboard filters</li>
+            </ul>
+            <p><strong>Documentation:</strong> See <code>IFRAME_EMBEDDING_GUIDE.md</code> for complete reference</p>
+        </div>
+    </div>
+</body>
+</html>

@@ -95,6 +95,31 @@ The application is fully compatible with Posit Connect Cloud:
 - ✅ Same code works locally and on server
 - ✅ Environment variables take precedence over `.env`
 
+## 🖼️ iFrame Embedding
+
+Individual charts can be embedded in external dashboards (Superset, Tableau, etc.) using URL parameters:
+
+```html
+<!-- Embed pyramid chart -->
+<iframe
+  src="http://your-app-url/?chart=pyramid&hide_header=true"
+  width="100%"
+  height="600px">
+</iframe>
+```
+
+**Available Charts:**
+- `total_cases`, `male_cases`, `female_cases` - Value boxes
+- `pyramid` - Age-sex distribution pyramid
+- `violin_plot` - Age distribution by sex
+- `age_group_bar` - Age group distribution
+- `map` - Geographic distribution
+- And more...
+
+**Documentation:**
+- Full guide: [IFRAME_EMBEDDING_GUIDE.md](IFRAME_EMBEDDING_GUIDE.md)
+- Live test page: `http://your-app-url/www/iframe_test.html`
+
 ## 📁 Project Structure
 
 ```

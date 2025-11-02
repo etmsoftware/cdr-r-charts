@@ -32,6 +32,8 @@ tryCatch({
 source("R/utils/db_connection.R")
 source("R/utils/data_loader.R")
 source("R/utils/theme_config.R")
+source("R/utils/query_params.R")
+source("R/utils/standalone_charts.R")
 
 source("R/modules/mod_overview.R")
 source("R/modules/mod_age_analysis.R")
@@ -65,7 +67,25 @@ if (has_geo_packages) {
 apply_modern_theme()
 thematic_shiny()
 
-ui <- page_navbar(
+# UI function - will be conditional based on query params
+ui <- function(request) {
+  # Parse query parameters
+  query <- parseQueryString(request$QUERY_STRING)
+  chart_name <- query$chart
+
+  # Check if standalone mode
+  if (!is.null(chart_name) && is_valid_chart(chart_name)) {
+    # Standalone mode - show only the requested chart
+    params <- list(
+      chart = chart_name,
+      hide_filters = as.logical(query$hide_filters %||% FALSE),
+      hide_header = as.logical(query$hide_header %||% FALSE)
+    )
+    return(create_standalone_ui(chart_name, params))
+  }
+
+  # Default: Full dashboard
+  page_navbar(
   title = "Mpox Dashboard - DRC1",
   id = "main_nav",
   theme = get_app_theme(),
@@ -202,9 +222,18 @@ ui <- page_navbar(
       col_widths = 12
     )
   )
-)
+  )  # End page_navbar
+}  # End ui function
 
 server <- function(input, output, session) {
+
+  # Parse query parameters (reactive)
+  params <- parse_query_params(session)
+
+  # Check standalone mode (reactive)
+  standalone_mode <- reactive({
+    is_standalone_mode(params())
+  })
 
   # Close database connection when session ends
   session$onSessionEnded(function() {
@@ -212,9 +241,17 @@ server <- function(input, output, session) {
     close_db_pool(db_pool)
   })
 
+  # Filtered data reactive
   filtered_data <- reactive({
     data <- dat
 
+    # In standalone mode, apply URL filters
+    if (standalone_mode()) {
+      data <- apply_url_filters(data, params(), filter_opts)
+      return(data)
+    }
+
+    # Full dashboard mode - apply UI filters
     # Apply province filter - include records without province data
     if (!is.null(input$province_filter) && length(input$province_filter) > 0) {
       data <- data %>% filter(
@@ -237,6 +274,24 @@ server <- function(input, output, session) {
     data
   })
 
+  # Standalone mode value boxes
+  moduleServer("standalone", function(input, output, session) {
+    output$total_cases <- renderText({ comma(nrow(filtered_data())) })
+    output$male_cases <- renderText({
+      comma(sum(filtered_data()$sex == "Male", na.rm = TRUE))
+    })
+    output$female_cases <- renderText({
+      comma(sum(filtered_data()$sex == "Female", na.rm = TRUE))
+    })
+  })
+
+  # Call all module servers (they only render if their UI is present)
+  overview_server("standalone", filtered_data)
+  age_analysis_server("standalone", filtered_data)
+  geographic_server("standalone", filtered_data, drc_sf)
+  analytics_server("standalone", filtered_data)
+
+  # Full dashboard modules
   overview_server("overview", filtered_data)
   age_analysis_server("age_analysis", filtered_data)
   geographic_server("geographic", filtered_data, drc_sf)
