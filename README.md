@@ -79,6 +79,22 @@ source("run_app.R")
 shiny::runApp()
 ```
 
+---
+
+## 🚀 Deploying to Posit Connect Cloud
+
+The application is fully compatible with Posit Connect Cloud:
+
+**Quick Start**: See [DEPLOYMENT_QUICK_START.md](DEPLOYMENT_QUICK_START.md)
+
+**Complete Guide**: See [POSIT_CONNECT_DEPLOYMENT.md](POSIT_CONNECT_DEPLOYMENT.md)
+
+**Key Points:**
+- ✅ Uses server environment variables (set in Posit Connect UI)
+- ✅ No `.env` file needed on server
+- ✅ Same code works locally and on server
+- ✅ Environment variables take precedence over `.env`
+
 ## 📁 Project Structure
 
 ```
