@@ -215,19 +215,23 @@ server <- function(input, output, session) {
   filtered_data <- reactive({
     data <- dat
 
+    # Apply province filter - include records without province data
     if (!is.null(input$province_filter) && length(input$province_filter) > 0) {
-      data <- data %>% filter(province %in% input$province_filter)
+      data <- data %>% filter(
+        is.na(province) | province == "" | province %in% input$province_filter
+      )
     }
 
     if (input$sex_filter != "All") {
       data <- data %>% filter(sex == input$sex_filter)
     }
 
+    # Apply age filter only to rows that have age data
+    # Keep rows without age data (NA) so total count is accurate
     data <- data %>%
       filter(
-        !is.na(case_age),
-        case_age >= input$age_filter[1],
-        case_age <= input$age_filter[2]
+        is.na(case_age) |
+        (case_age >= input$age_filter[1] & case_age <= input$age_filter[2])
       )
 
     data

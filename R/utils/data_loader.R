@@ -68,8 +68,8 @@ process_sex_variable <- function(dat) {
   if ("case_sex_num" %in% names(dat)) {
     message("Processing case_sex_num column")
     dat <- dat %>%
-      mutate(sex = factor(case_sex_num, levels = c(1, 2),
-                         labels = c("Male", "Female")))
+      mutate(sex = factor(case_sex_num, levels = c(1, 2, NA),
+                         labels = c("Male", "Female", "Unknown")))
   } else if ("case_sex" %in% names(dat)) {
     message("Processing case_sex column")
     dat <- dat %>%
@@ -79,7 +79,11 @@ process_sex_variable <- function(dat) {
                           "Masculin" = "Male", "Féminin" = "Female",
                           "Feminin" = "Female",
                           .default = sex)) %>%
-      mutate(sex = factor(sex, levels = c("Male", "Female")))
+      mutate(sex = case_when(
+        is.na(sex) | sex == "" | sex == "Na" ~ "Unknown",
+        TRUE ~ sex
+      )) %>%
+      mutate(sex = factor(sex, levels = c("Male", "Female", "Unknown")))
   } else if ("sex" %in% names(dat)) {
     message("Sex column already exists, cleaning it")
     dat <- dat %>%
@@ -89,10 +93,14 @@ process_sex_variable <- function(dat) {
                           "Masculin" = "Male", "Féminin" = "Female",
                           "Feminin" = "Female",
                           .default = sex)) %>%
-      mutate(sex = factor(sex, levels = c("Male", "Female")))
+      mutate(sex = case_when(
+        is.na(sex) | sex == "" | sex == "Na" ~ "Unknown",
+        TRUE ~ sex
+      )) %>%
+      mutate(sex = factor(sex, levels = c("Male", "Female", "Unknown")))
   } else {
     warning("No sex column found in the data. Available columns: ", paste(names(dat), collapse = ", "))
-    dat$sex <- NA_character_
+    dat$sex <- factor("Unknown", levels = c("Male", "Female", "Unknown"))
   }
   return(dat)
 }
@@ -162,10 +170,14 @@ process_province_variable <- function(dat) {
 }
 
 get_filter_options <- function(dat) {
+  # Calculate actual age range from data (default to 0-110 if no age data)
+  age_min <- if(all(is.na(dat$case_age))) 0 else floor(min(dat$case_age, na.rm = TRUE))
+  age_max <- if(all(is.na(dat$case_age))) 110 else ceiling(max(dat$case_age, na.rm = TRUE))
+
   list(
     provinces = sort(unique(dat$province[!is.na(dat$province) &
                                            dat$province != ""])),
-    sexes = c("All", "Male", "Female"),
-    age_range = c(0, 110)
+    sexes = c("All", "Male", "Female", "Unknown"),
+    age_range = c(max(0, age_min), age_max)  # Ensure min is at least 0
   )
 }

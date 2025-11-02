@@ -50,7 +50,7 @@ age_analysis_server <- function(id, filtered_data) {
 
     output$violin_plot <- renderPlot({
       plot_data <- filtered_data() %>%
-        filter(!is.na(sex), !is.na(case_age), case_age >= 0, case_age <= 110)
+        filter(!is.na(case_age), case_age >= 0, case_age <= 110)
 
       if (nrow(plot_data) == 0) {
         return(ggplot() + theme_void() +
@@ -84,7 +84,7 @@ age_analysis_server <- function(id, filtered_data) {
           shape = 18
         ) +
         scale_fill_manual(
-          values = c("Male" = pal["Male"], "Female" = pal["Female"])
+          values = c("Male" = pal["Male"], "Female" = pal["Female"], "Unknown" = pal["Unknown"])
         ) +
         scale_y_continuous(
           breaks = seq(0, 100, 10),
@@ -156,7 +156,7 @@ age_analysis_server <- function(id, filtered_data) {
 
     output$age_stats_table <- renderTable({
       filtered_data() %>%
-        filter(!is.na(sex), !is.na(case_age)) %>%
+        filter(!is.na(case_age)) %>%
         group_by(Sex = sex) %>%
         summarise(
           N = comma(n()),

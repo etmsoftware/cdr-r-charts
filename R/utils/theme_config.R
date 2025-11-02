@@ -2,6 +2,7 @@ get_color_palette <- function() {
   c(
     "Female" = "#E63946",      # Modern vibrant red
     "Male" = "#457B9D",        # Modern slate blue
+    "Unknown" = "#999999",     # Gray for unknown/missing
     "primary" = "#1D3557",     # Deep navy
     "secondary" = "#A8DADC",   # Light cyan
     "accent" = "#F1FAEE",      # Off-white
@@ -98,7 +99,7 @@ scale_color_sex <- function(discrete = TRUE) {
   pal <- get_color_palette()
   if (discrete) {
     scale_color_manual(
-      values = c("Male" = pal["Male"], "Female" = pal["Female"]),
+      values = c("Male" = pal["Male"], "Female" = pal["Female"], "Unknown" = pal["Unknown"]),
       name = "Sex"
     )
   }
@@ -108,7 +109,7 @@ scale_fill_sex <- function(discrete = TRUE) {
   pal <- get_color_palette()
   if (discrete) {
     scale_fill_manual(
-      values = c("Male" = pal["Male"], "Female" = pal["Female"]),
+      values = c("Male" = pal["Male"], "Female" = pal["Female"], "Unknown" = pal["Unknown"]),
       name = "Sex"
     )
   }

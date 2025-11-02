@@ -67,7 +67,6 @@ overview_server <- function(id, filtered_data) {
 
     output$summary_table <- renderTable({
       filtered_data() %>%
-        filter(!is.na(sex)) %>%
         group_by(sex) %>%
         summarise(
           Cases = comma(n()),
@@ -79,8 +78,12 @@ overview_server <- function(id, filtered_data) {
     }, striped = TRUE, bordered = TRUE, hover = TRUE, width = "100%")
 
     output$pyramid_plot <- renderPlot({
+      # Get total cases count (all data)
+      total_cases <- nrow(filtered_data())
+
+      # Filter for pyramid (only Male/Female with age groups for visualization)
       pyr_data <- filtered_data() %>%
-        filter(!is.na(age_group), !is.na(sex)) %>%
+        filter(!is.na(age_group), sex %in% c("Male", "Female")) %>%
         count(age_group, sex, name = "n") %>%
         mutate(n_mirror = ifelse(sex == "Male", -n, n))
 
@@ -113,7 +116,7 @@ overview_server <- function(id, filtered_data) {
         ) +
         labs(
           title = "Population Distribution by Age and Sex",
-          subtitle = paste0("Total Cases: ", comma(sum(pyr_data$n))),
+          subtitle = paste0("Total Cases: ", comma(total_cases)),
           x = "Age Group",
           y = "Number of Cases",
           fill = NULL,
