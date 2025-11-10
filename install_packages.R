@@ -18,7 +18,9 @@ packages <- c(
   "RPostgres",
   "pool",
   "config",
-  "jsonlite"
+  "jsonlite",
+  "lubridate",
+  "zoo"
 )
 
 for (pkg in packages) {

@@ -1,5 +1,6 @@
 if (!require("dplyr", quietly = TRUE)) library(dplyr)
 if (!require("stringr", quietly = TRUE)) library(stringr)
+if (!require("lubridate", quietly = TRUE)) library(lubridate)
 
 load_case_data <- function(source = "database", db_pool = NULL) {
   if (source == "database") {
@@ -22,6 +23,7 @@ load_case_data_from_db <- function(db_pool) {
   # Map PostgreSQL columns to expected R data frame structure
   dat <- dat %>%
     mutate(
+      # ============ DEMOGRAPHICS ============
       # Sex mapping: PostgreSQL "Sex" -> case_sex
       case_sex = `Sex`,
 
@@ -38,25 +40,123 @@ load_case_data_from_db <- function(db_pool) {
       # Province mapping: Use "Reporting Location (subnational)"
       province_division = `Reporting Location (subnational)`,
 
-      # Additional useful fields
+      # ============ CASE IDENTIFIERS ============
       case_id = `Case ID`,
       record_id = `Record ID`,
-      case_classification = `Case Classification`,
-      date_of_diagnosis = as.Date(`Date Of Diagnosis`),
-      date_of_notification = as.Date(`DateOfNotification`),
       full_name = `Full Name`,
       province_iso = `Reporting Location (subnational) ISO`,
       province_iso_name = `Reporting Location (subnational) (ISO Name)`,
+
+      # ============ DATES ============
       date_of_birth = as.Date(`Date Of Birth`),
-      status = `Status`
+      date_of_diagnosis = as.Date(`Date Of Diagnosis`),
+      date_of_notification = as.Date(`DateOfNotification`),
+      notification_date = as.Date(`DateOfNotification`),  # For R script compatibility
+      symptom_onset_date = as.Date(`If Symptomatic, Date Of Symptoms Onset`),
+      specimen_collection_date = as.Date(`Date Of Specimen Collection`),
+      date_of_death = as.Date(`If Outcome Is Died, Report The Date Of Death`),
+      discharge_or_death_date = as.Date(`Date Of Discharge/of Death`),
+
+      # ============ CASE CLASSIFICATION ============
+      case_classification = `Case Classification`,
+      final_classification = `Final Case Classification`,
+      final_classification_num = case_when(
+        str_detect(str_to_lower(`Final Case Classification`), "suspect") ~ 1,
+        str_detect(str_to_lower(`Final Case Classification`), "probabl") ~ 2,
+        str_detect(str_to_lower(`Final Case Classification`), "confirm") ~ 3,
+        str_detect(str_to_lower(`Final Case Classification`), "under.*invest") ~ 4,
+        str_detect(str_to_lower(`Final Case Classification`), "not.*case") ~ 5,
+        TRUE ~ NA_real_
+      ),
+
+      # ============ CASE STATUS / OUTCOME ============
+      status = `Status`,
+      case_status = `Status`,
+      case_status_num = case_when(
+        str_detect(str_to_lower(`Status`), "alive|vivant") ~ 1,
+        str_detect(str_to_lower(`Status`), "deceased|dead|mort|décédé") ~ 2,
+        TRUE ~ NA_real_
+      ),
+
+      # ============ LAB RESULTS ============
+      lab_results = `Test Result`,
+      lab_results_num = case_when(
+        str_detect(str_to_lower(`Test Result`), "positif|positive|pos") ~ 1,
+        str_detect(str_to_lower(`Test Result`), "negatif|négatif|negative|neg") ~ 2,
+        str_detect(str_to_lower(`Test Result`), "indetermina|indéterminé") ~ 3,
+        str_detect(str_to_lower(`Test Result`), "invalide|invalid") ~ 4,
+        TRUE ~ NA_real_
+      ),
+      specimen_type = `Specimen For The Diagnosis`,
+      clade_characterization = `Clade Characterization`,
+      clade_type = `If Clade Characterization Is Yes, Which Clade?`,
+
+      # ============ EXPOSURE / RISK FACTORS ============
+      animal_contact = `Contact Animals`,
+      animal_contact_num = case_when(
+        str_detect(str_to_lower(`Contact Animals`), "yes|oui|y|1") ~ 1,
+        str_detect(str_to_lower(`Contact Animals`), "no|non|n|0") ~ 0,
+        TRUE ~ 2  # Don't know / missing
+      ),
+      animal_group = `If Contact Animals Is Yes, Which Group Of Animals`,
+      animal_contact_type = `If Contact Animals Is Yes, Type Of Contact`,
+
+      contact_with_person_with_lesions = `Contact With A Case`,
+      contact_person_with_lesions_num = case_when(
+        str_detect(str_to_lower(`Contact With A Case`), "yes|oui|y|1") ~ 1,
+        str_detect(str_to_lower(`Contact With A Case`), "no|non|n|0") ~ 0,
+        TRUE ~ 2  # Don't know / missing
+      ),
+      contact_frequency = `---How Often Did The Contact Occur?`,
+      contact_location = `If Contact With A Case Is Yes, Where Did The Contact Occur?`,
+
+      is_health_worker = `Is The Case A Health Worker?`,
+
+      # ============ SYMPTOMS ============
+      symptoms_present = `Symptoms`,
+      symptoms_present_num = case_when(
+        str_detect(str_to_lower(`Symptoms`), "yes|oui|y|1") ~ 1,
+        str_detect(str_to_lower(`Symptoms`), "no|non|n|0") ~ 0,
+        TRUE ~ 9  # Don't know
+      ),
+      symptoms_observed = `If Symptomatic, List Of Symptoms`,
+
+      # ============ VACCINATION HISTORY ============
+      previous_mpox_infection = `Previous Mpox Infection`,
+      mpox_vaccination_dose = `Mpox Vaccination Dose`,
+      vaccine1_date = as.Date(`If MonkeypoxVaccine1 Yes, Vaccination Date`),
+      vaccine2_date = as.Date(`If MonkeypoxVaccine2 Yes, Vaccination Date`),
+
+      # ============ TREATMENT ============
+      intensive_care = `Intensive Care`,
+      antiviral_treatment = `What Antiviral Treatment Is The Case Receiving For Mpox?`,
+
+      # ============ ADMINISTRATIVE ============
+      dictionary_id = `dictionaryId`,
+      created_at = `Created At`,
+      dictionary_version = `Dictionary Version`,
+      comments = `Comments`,
+      name_key = `name_key`
     )
 
   message("Column mapping completed")
 
+  # Process standard variables
   dat <- process_sex_variable(dat)
   dat <- process_age_variable(dat)
   dat <- process_age_group_variable(dat)
   dat <- process_province_variable(dat)
+
+  # Add derived temporal variables for epi curves
+  dat <- dat %>%
+    mutate(
+      notification_month = floor_date(notification_date, "month"),
+      month = month(notification_date),
+      year = year(notification_date),
+      iso_year = isoyear(notification_date),
+      iso_week = isoweek(notification_date),
+      week_start = floor_date(notification_date, unit = "week", week_start = 1)
+    )
 
   message("After processing - unique sex values: ", paste(unique(dat$sex), collapse = ", "))
   message("Final dataset: ", nrow(dat), " rows with ", sum(!is.na(dat$sex)), " having sex data")

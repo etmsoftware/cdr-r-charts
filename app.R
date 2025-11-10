@@ -15,6 +15,8 @@ suppressPackageStartupMessages({
   library(forcats)
   library(scales)
   library(DT)
+  library(lubridate)
+  library(zoo)
 })
 
 has_geo_packages <- FALSE
@@ -39,6 +41,9 @@ source("R/modules/mod_overview.R")
 source("R/modules/mod_age_analysis.R")
 source("R/modules/mod_geographic.R")
 source("R/modules/mod_analytics.R")
+source("R/modules/mod_epidemiology.R")
+source("R/modules/mod_lab_results.R")
+source("R/modules/mod_classification.R")
 
 # Create database connection pool
 message("Initializing database connection...")
@@ -170,6 +175,24 @@ ui <- function(request) {
   ),
 
   nav_panel(
+    title = tagList(icon("chart-area"), "Epidemiology"),
+    value = "epidemiology",
+    epidemiology_ui("epidemiology")
+  ),
+
+  nav_panel(
+    title = tagList(icon("flask"), "Lab Results"),
+    value = "lab_results",
+    lab_results_ui("lab_results")
+  ),
+
+  nav_panel(
+    title = tagList(icon("clipboard-check"), "Classification"),
+    value = "classification",
+    classification_ui("classification")
+  ),
+
+  nav_panel(
     title = tagList(icon("info-circle"), "About"),
     value = "about",
     layout_columns(
@@ -296,6 +319,9 @@ server <- function(input, output, session) {
   age_analysis_server("age_analysis", filtered_data)
   geographic_server("geographic", filtered_data, drc_sf)
   analytics_server("analytics", filtered_data)
+  epidemiology_server("epidemiology", filtered_data)
+  lab_results_server("lab_results", filtered_data)
+  classification_server("classification", filtered_data)
 }
 
 shinyApp(ui = ui, server = server)

@@ -1644,6 +1644,35 @@
         "RemoteSha": "1.4.4"
       }
     },
+    "lattice": {
+      "Source": "CRAN",
+      "Repository": "https://cran.rstudio.com",
+      "description": {
+        "Package": "lattice",
+        "Version": "0.22-7",
+        "Date": "2025-03-31",
+        "Priority": "recommended",
+        "Title": "Trellis Graphics for R",
+        "Authors@R": "c(person(\"Deepayan\", \"Sarkar\", role = c(\"aut\", \"cre\"),\n\t            email = \"deepayan.sarkar@r-project.org\",\n\t\t    comment = c(ORCID = \"0000-0003-4107-1553\")),\n              person(\"Felix\", \"Andrews\", role = \"ctb\"),\n\t      person(\"Kevin\", \"Wright\", role = \"ctb\", comment = \"documentation\"),\n\t      person(\"Neil\", \"Klepeis\", role = \"ctb\"),\n\t      person(\"Johan\", \"Larsson\", role = \"ctb\", comment = \"miscellaneous improvements\"),\n              person(\"Zhijian (Jason)\", \"Wen\", role = \"cph\", comment = \"filled contour code\"),\n              person(\"Paul\", \"Murrell\", role = \"ctb\", email = \"paul@stat.auckland.ac.nz\"),\n\t      person(\"Stefan\", \"Eng\", role = \"ctb\", comment = \"violin plot improvements\"),\n\t      person(\"Achim\", \"Zeileis\", role = \"ctb\", comment = \"modern colors\"),\n              person(\"Alexandre\", \"Courtiol\", role = \"ctb\", comment = \"generics for larrows, lpolygon, lrect and lsegments\")\n\t      )",
+        "Description": "A powerful and elegant high-level data visualization\n  system inspired by Trellis graphics, with an emphasis on\n  multivariate data. Lattice is sufficient for typical graphics needs,\n  and is also flexible enough to handle most nonstandard requirements.\n  See ?Lattice for an introduction.",
+        "Depends": "R (>= 4.0.0)",
+        "Suggests": "KernSmooth, MASS, latticeExtra, colorspace",
+        "Imports": "grid, grDevices, graphics, stats, utils",
+        "Enhances": "chron, zoo",
+        "LazyLoad": "yes",
+        "LazyData": "yes",
+        "License": "GPL (>= 2)",
+        "URL": "https://lattice.r-forge.r-project.org/",
+        "BugReports": "https://github.com/deepayan/lattice/issues",
+        "NeedsCompilation": "yes",
+        "Packaged": "2025-04-02 04:55:57 UTC; deepayan",
+        "Author": "Deepayan Sarkar [aut, cre] (<https://orcid.org/0000-0003-4107-1553>),\n  Felix Andrews [ctb],\n  Kevin Wright [ctb] (documentation),\n  Neil Klepeis [ctb],\n  Johan Larsson [ctb] (miscellaneous improvements),\n  Zhijian (Jason) Wen [cph] (filled contour code),\n  Paul Murrell [ctb],\n  Stefan Eng [ctb] (violin plot improvements),\n  Achim Zeileis [ctb] (modern colors),\n  Alexandre Courtiol [ctb] (generics for larrows, lpolygon, lrect and\n    lsegments)",
+        "Maintainer": "Deepayan Sarkar <deepayan.sarkar@r-project.org>",
+        "Repository": "CRAN",
+        "Date/Publication": "2025-04-02 15:40:02 UTC",
+        "Built": "R 4.5.1; aarch64-apple-darwin20; 2025-06-14 01:29:47 UTC; unix"
+      }
+    },
     "lazyeval": {
       "Source": "CRAN",
       "Repository": "https://cran.rstudio.com",
@@ -1735,12 +1764,7 @@
         "Repository": "CRAN",
         "Date/Publication": "2024-12-08 12:10:02 UTC",
         "Built": "R 4.5.0; aarch64-apple-darwin20; 2025-04-01 06:37:23 UTC; unix",
-        "Archs": "lubridate.so.dSYM",
-        "RemoteType": "standard",
-        "RemotePkgRef": "lubridate",
-        "RemoteRef": "lubridate",
-        "RemoteRepos": "https://cran.rstudio.com",
-        "RemoteSha": "1.9.4"
+        "Archs": "lubridate.so.dSYM"
       }
     },
     "magrittr": {
@@ -3304,17 +3328,45 @@
         "RemoteRepos": "https://cran.rstudio.com",
         "RemoteSha": "2.3.10"
       }
+    },
+    "zoo": {
+      "Source": "CRAN",
+      "Repository": "https://cran.rstudio.com",
+      "description": {
+        "Package": "zoo",
+        "Version": "1.8-14",
+        "Date": "2025-04-09",
+        "Title": "S3 Infrastructure for Regular and Irregular Time Series (Z's\nOrdered Observations)",
+        "Authors@R": "c(person(given = \"Achim\", family = \"Zeileis\", role = c(\"aut\", \"cre\"), email = \"Achim.Zeileis@R-project.org\",\n                    comment = c(ORCID = \"0000-0003-0918-3766\")),\n             person(given = \"Gabor\", family = \"Grothendieck\", role = \"aut\", email = \"ggrothendieck@gmail.com\"),\n             person(given = c(\"Jeffrey\", \"A.\"), family = \"Ryan\", role = \"aut\", email = \"jeff.a.ryan@gmail.com\"),\n             person(given = c(\"Joshua\", \"M.\"), family = \"Ulrich\", role = \"ctb\", email = \"josh.m.ulrich@gmail.com\"),\n             person(given = \"Felix\", family = \"Andrews\", role = \"ctb\", email = \"felix@nfrac.org\"))",
+        "Description": "An S3 class with methods for totally ordered indexed\n             observations. It is particularly aimed at irregular time series\n             of numeric vectors/matrices and factors. zoo's key design goals\n             are independence of a particular index/date/time class and\n             consistency with ts and base R by providing methods to extend\n             standard generics.",
+        "Depends": "R (>= 3.1.0), stats",
+        "Suggests": "AER, coda, chron, ggplot2 (>= 3.5.0), mondate, scales,\nstinepack, strucchange, timeDate, timeSeries, tinyplot, tis,\ntseries, xts",
+        "Imports": "utils, graphics, grDevices, lattice (>= 0.20-27)",
+        "License": "GPL-2 | GPL-3",
+        "URL": "https://zoo.R-Forge.R-project.org/",
+        "NeedsCompilation": "yes",
+        "Packaged": "2025-04-09 16:51:51 UTC; zeileis",
+        "Author": "Achim Zeileis [aut, cre] (<https://orcid.org/0000-0003-0918-3766>),\n  Gabor Grothendieck [aut],\n  Jeffrey A. Ryan [aut],\n  Joshua M. Ulrich [ctb],\n  Felix Andrews [ctb]",
+        "Maintainer": "Achim Zeileis <Achim.Zeileis@R-project.org>",
+        "Repository": "CRAN",
+        "Date/Publication": "2025-04-10 06:40:02 UTC",
+        "Built": "R 4.5.0; aarch64-apple-darwin20; 2025-04-10 07:17:46 UTC; unix",
+        "Archs": "zoo.so.dSYM"
+      }
     }
   },
   "files": {
     ".env": {
-      "checksum": "e2143dc0079eebd8e7b47da45fde9688"
+      "checksum": "99b2ccea7e1d03434d0fb1c52d7ec8a2"
     },
     ".env.example": {
       "checksum": "d352c2fccb9beb040910f056adae9fa4"
     },
     "app.R": {
-      "checksum": "6087e8cec8feab251acf702a38228cc1"
+      "checksum": "ce76d661e1730791381cf7ee265767b2"
+    },
+    "COLUMN_MAPPING_ANALYSIS.md": {
+      "checksum": "ae6e60c4e1206139b46d86e24d2b0ff0"
     },
     "config.yml": {
       "checksum": "b61523c9447400abddb0a704715a9565"
@@ -3322,44 +3374,80 @@
     "data/complete_case_dataset_sim_final.xlsx": {
       "checksum": "4a0dda7305c35465d8e5a9929d32256a"
     },
+    "DEPLOYMENT_QUICK_START.md": {
+      "checksum": "e100e4e6dcc5da26b39ffdfb04acb03b"
+    },
+    "FIXING_TOTAL_COUNT.md": {
+      "checksum": "531316549350ba78dff8f3483c93b22d"
+    },
+    "IFRAME_EMBEDDING_DESIGN.md": {
+      "checksum": "f83d35a87ac50290ed0f6f391b47c293"
+    },
+    "IFRAME_EMBEDDING_GUIDE.md": {
+      "checksum": "15c8f0311cfa32d2c993dea3ff0d5254"
+    },
     "install_packages.R": {
-      "checksum": "bba58fe94c55592aa26d37218b41214a"
+      "checksum": "98ef758d1975f9bc49f75358dedbea56"
     },
     "MIGRATION_SUMMARY.md": {
       "checksum": "432f49389c794ad011bf7704f954d59c"
     },
+    "NEW_CHARTS_INTEGRATION_SUMMARY.md": {
+      "checksum": "b38c47c8fb6ec189c794094ad64f8ce3"
+    },
+    "POSIT_CONNECT_DEPLOYMENT.md": {
+      "checksum": "f4137e946d7d3fe142baaac18ab55c4d"
+    },
     "R/modules/mod_age_analysis.R": {
-      "checksum": "5e7965b442f0f1070127f2079455293d"
+      "checksum": "7b2e8576c7364f4636852311e67beea1"
     },
     "R/modules/mod_analytics.R": {
-      "checksum": "020b042f7fd91b01849776a304d8fe1b"
+      "checksum": "8d67eb7dd14d76186d34b5e685f20a6f"
+    },
+    "R/modules/mod_classification.R": {
+      "checksum": "d2636a9499d9f3cf5192da97a77477e0"
+    },
+    "R/modules/mod_epidemiology.R": {
+      "checksum": "5a25ba3f4815c62d1e68deb055864082"
     },
     "R/modules/mod_geographic.R": {
       "checksum": "87bc5fe65d2fffd0983582e863e9735c"
     },
+    "R/modules/mod_lab_results.R": {
+      "checksum": "1e00f2a58b0dcc03fa28e9d611b631a9"
+    },
     "R/modules/mod_overview.R": {
-      "checksum": "aede4b50ee94de2d567f1b0d9bf41973"
+      "checksum": "86b41c5023858849603cef3888222f4e"
     },
     "R/utils/data_loader.R": {
-      "checksum": "3b2d03dce4a8ce7e013d42c993fb1359"
+      "checksum": "f6800559790ee20b6205068eace8482c"
     },
     "R/utils/db_connection.R": {
-      "checksum": "456799ffadfc3d0cf1557db403eefe7e"
+      "checksum": "9bf4b35ef604f3239292cfded4d7122e"
+    },
+    "R/utils/query_params.R": {
+      "checksum": "0ab9ec116470d71b54978087b3048170"
+    },
+    "R/utils/standalone_charts.R": {
+      "checksum": "41df38bf0d9fe9700d97ad8dca67511b"
     },
     "R/utils/theme_config.R": {
-      "checksum": "ca9740009baeba7cb9c9e0540d1b7cd1"
+      "checksum": "b37badc90d69db371db0884a286d2fa0"
     },
     "README.md": {
-      "checksum": "18ff9c6124a3b97cea11193e16ac463b"
+      "checksum": "71005a838d6b21525870247954a319cd"
     },
     "run_app.R": {
-      "checksum": "52262c80d58b987ee4167fc53a83e2d9"
+      "checksum": "38e21ac55d41fc3cc55037281782fb29"
     },
     "test_data_loader.R": {
-      "checksum": "8520518af2b2bea8c73d05e78abc474e"
+      "checksum": "a3159872dfa12fbbd095a9f8a5bb1773"
     },
     "test_db_connection.R": {
-      "checksum": "78b95abf76e1b100978b30f21b349144"
+      "checksum": "6e8399b8211df6484cac27db6461e6c5"
+    },
+    "www/iframe_test.html": {
+      "checksum": "b4751fbfa026da7f22433906bbeae927"
     },
     "www/logo.png": {
       "checksum": "ed412a02a00b5f4592cdfe3568e90ad0"
