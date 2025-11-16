@@ -84,10 +84,10 @@ get_standalone_chart_ui <- function(chart_name, ns = NS("standalone")) {
     "density_curve" = plotOutput(ns("density_plot"), height = "550px"),
 
     # Analytics - Boxplot
-    "boxplot" = plotOutput(ns("boxplot_plot"), height = "550px"),
+    "boxplot" = plotOutput(ns("box_plot"), height = "550px"),
 
     # Analytics - Data Table
-    "data_table" = DTOutput(ns("data_table")),
+    "data_table" = DTOutput(ns("detailed_table")),
 
     # Epidemiology - Weekly Epi Curve
     "epi_curve_weekly" = plotOutput(ns("epi_curve_weekly"), height = "600px"),
