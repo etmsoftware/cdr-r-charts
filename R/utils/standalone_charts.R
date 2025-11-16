@@ -89,6 +89,42 @@ get_standalone_chart_ui <- function(chart_name, ns = NS("standalone")) {
     # Analytics - Data Table
     "data_table" = DTOutput(ns("data_table")),
 
+    # Epidemiology - Weekly Epi Curve
+    "epi_curve_weekly" = plotOutput(ns("epi_curve_weekly"), height = "600px"),
+
+    # Epidemiology - Monthly Epi Curve
+    "epi_curve_monthly" = plotOutput(ns("epi_curve_monthly"), height = "600px"),
+
+    # Epidemiology - Cumulative Curve
+    "cumulative_curve" = plotOutput(ns("cumulative_curve"), height = "600px"),
+
+    # Epidemiology - Seasonality Ribbon
+    "seasonality_ribbon" = plotOutput(ns("seasonality_ribbon"), height = "600px"),
+
+    # Lab Results - Bar Chart
+    "lab_result_bars" = plotOutput(ns("lab_result_bars"), height = "550px"),
+
+    # Lab Results - Pie Chart
+    "lab_result_pie" = plotOutput(ns("lab_result_pie"), height = "550px"),
+
+    # Lab Results - Table
+    "lab_result_table" = tableOutput(ns("lab_result_table")),
+
+    # Classification - Distribution
+    "classification_dist" = plotOutput(ns("classification_dist"), height = "550px"),
+
+    # Classification - Outcome Distribution
+    "outcome_dist" = plotOutput(ns("outcome_dist"), height = "550px"),
+
+    # Classification - Time Series
+    "classification_time" = plotOutput(ns("classification_time"), height = "600px"),
+
+    # Classification - By Province
+    "classification_province" = plotOutput(ns("classification_province"), height = "650px"),
+
+    # Classification - Outcome by Sex
+    "outcome_sex" = plotOutput(ns("outcome_sex"), height = "550px"),
+
     # Default
     div(
       class = "alert alert-warning",

@@ -189,10 +189,31 @@ classification_server <- function(id, filtered_data) {
           month = floor_date(notification_date, "month")
         )
 
-      # Monthly counts
-      df_time <- df %>%
+      # Monthly counts for all data
+      df_time_all <- df %>%
         count(month, classification, name = "cases") %>%
-        arrange(month)
+        arrange(month) %>%
+        group_by(month) %>%
+        mutate(month_total = sum(cases)) %>%
+        ungroup() %>%
+        arrange(month) %>%
+        mutate(cumulative = cumsum(month_total))
+
+      # Find where outbreak really starts (5% of total cases)
+      total_cases <- sum(df_time_all$cases)
+      threshold <- total_cases * 0.05
+      start_month <- df_time_all %>%
+        filter(cumulative >= threshold) %>%
+        pull(month) %>%
+        min()
+
+      # Filter to show only from outbreak start
+      df_time <- df_time_all %>%
+        filter(month >= start_month) %>%
+        select(month, classification, cases)
+
+      # Get the actual date range
+      date_range <- range(df_time$month, na.rm = TRUE)
 
       # Use theme colors
       classif_levels <- unique(df_time$classification)
@@ -201,7 +222,11 @@ classification_server <- function(id, filtered_data) {
       ggplot(df_time, aes(x = month, y = cases, fill = classification)) +
         geom_area(position = "stack", alpha = 0.8) +
         scale_fill_manual(values = pal, name = "Classification") +
-        scale_x_date(date_breaks = "1 month", date_labels = "%b\n%Y") +
+        scale_x_date(
+          limits = date_range,
+          date_breaks = "2 months",
+          date_labels = "%b\n%Y"
+        ) +
         scale_y_continuous(labels = comma) +
         labs(
           title = "Case Classification Trends Over Time",

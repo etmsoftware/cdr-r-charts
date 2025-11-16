@@ -70,7 +70,7 @@ epidemiology_server <- function(id, filtered_data) {
       }
 
       # Build weekly counts with 3-week moving average
-      df_week <- df %>%
+      df_week_all <- df %>%
         mutate(
           week_start = floor_date(notification_date, unit = "week", week_start = 1),
           iso_year = isoyear(notification_date),
@@ -78,13 +78,34 @@ epidemiology_server <- function(id, filtered_data) {
         ) %>%
         count(week_start, iso_year, iso_week, name = "cases") %>%
         arrange(week_start) %>%
+        mutate(cumulative = cumsum(cases))
+
+      # Find where outbreak really starts (5% of total cases)
+      total_cases <- sum(df_week_all$cases)
+      threshold <- total_cases * 0.05
+      start_week <- df_week_all %>%
+        filter(cumulative >= threshold) %>%
+        pull(week_start) %>%
+        min()
+
+      # Filter to show only from outbreak start
+      df_week <- df_week_all %>%
+        filter(week_start >= start_week) %>%
+        select(-cumulative) %>%
         mutate(ma3 = zoo::rollmean(cases, k = 3, fill = NA, align = "center"))
+
+      # Get the actual date range of the data
+      date_range <- range(df_week$week_start, na.rm = TRUE)
 
       ggplot(df_week, aes(x = week_start)) +
         geom_col(aes(y = cases), fill = "#7FB3A6", width = 6.5) +
         geom_line(aes(y = ma3), linewidth = 1.1, color = "#D62728") +
-        scale_x_date(date_breaks = "1 month", date_labels = "%b %d\n%Y",
-                     expand = expansion(mult = c(0.01, 0.02))) +
+        scale_x_date(
+          limits = date_range,
+          date_breaks = "2 weeks",
+          date_labels = "%b %d\n%Y",
+          expand = expansion(mult = c(0.01, 0.02))
+        ) +
         scale_y_continuous(labels = comma) +
         labs(
           title = "Epidemic curve (weekly) — Mpox notifications",
@@ -112,17 +133,38 @@ epidemiology_server <- function(id, filtered_data) {
                  theme_void())
       }
 
-      df_month <- df %>%
+      df_month_all <- df %>%
         mutate(month = floor_date(notification_date, "month")) %>%
         count(month, name = "cases") %>%
         arrange(month) %>%
+        mutate(cumulative = cumsum(cases))
+
+      # Find where outbreak really starts (5% of total cases)
+      total_cases <- sum(df_month_all$cases)
+      threshold <- total_cases * 0.05
+      start_month <- df_month_all %>%
+        filter(cumulative >= threshold) %>%
+        pull(month) %>%
+        min()
+
+      # Filter to show only from outbreak start
+      df_month <- df_month_all %>%
+        filter(month >= start_month) %>%
+        select(-cumulative) %>%
         mutate(ma3 = zoo::rollmean(cases, k = 3, fill = NA, align = "center"))
+
+      # Get the actual date range of the data
+      date_range <- range(df_month$month, na.rm = TRUE)
 
       ggplot(df_month, aes(x = month)) +
         geom_col(aes(y = cases), fill = "#9F2241", width = 25) +
         geom_line(aes(y = ma3), linewidth = 1.1, color = "grey20") +
-        scale_x_date(date_breaks = "1 month", date_labels = "%b\n%Y",
-                     expand = expansion(mult = c(0.01, 0.02))) +
+        scale_x_date(
+          limits = date_range,
+          date_breaks = "2 months",
+          date_labels = "%b\n%Y",
+          expand = expansion(mult = c(0.01, 0.02))
+        ) +
         scale_y_continuous(labels = comma) +
         labs(
           title = "Epidemic curve (monthly) — Mpox notifications",
@@ -150,16 +192,35 @@ epidemiology_server <- function(id, filtered_data) {
                  theme_void())
       }
 
-      df_cumul <- df %>%
+      df_cumul_all <- df %>%
         mutate(week_start = floor_date(notification_date, unit = "week", week_start = 1)) %>%
         count(week_start, name = "cases") %>%
         arrange(week_start) %>%
         mutate(cumulative = cumsum(cases))
 
+      # Find where outbreak really starts (5% of total cases)
+      total_cases <- max(df_cumul_all$cumulative)
+      threshold <- total_cases * 0.05
+      start_week <- df_cumul_all %>%
+        filter(cumulative >= threshold) %>%
+        pull(week_start) %>%
+        min()
+
+      # Filter to show only from outbreak start
+      df_cumul <- df_cumul_all %>%
+        filter(week_start >= start_week)
+
+      # Get the actual date range of the data
+      date_range <- range(df_cumul$week_start, na.rm = TRUE)
+
       ggplot(df_cumul, aes(x = week_start)) +
         geom_area(aes(y = cumulative), fill = "#7FB3A6", alpha = 0.6) +
         geom_line(aes(y = cumulative), color = "#58595B", linewidth = 1.2) +
-        scale_x_date(date_breaks = "1 month", date_labels = "%b\n%Y") +
+        scale_x_date(
+          limits = date_range,
+          date_breaks = "2 months",
+          date_labels = "%b\n%Y"
+        ) +
         scale_y_continuous(labels = comma) +
         labs(
           title = "Cumulative cases over time",

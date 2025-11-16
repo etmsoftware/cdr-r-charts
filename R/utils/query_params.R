@@ -46,7 +46,17 @@ is_valid_chart <- function(chart_name) {
     "map", "top_provinces", "province_table",
 
     # Analytics tab
-    "density_curve", "boxplot", "data_table"
+    "density_curve", "boxplot", "data_table",
+
+    # Epidemiology tab
+    "epi_curve_weekly", "epi_curve_monthly", "cumulative_curve", "seasonality_ribbon",
+
+    # Lab Results tab
+    "lab_result_bars", "lab_result_pie", "lab_result_table",
+
+    # Classification tab
+    "classification_dist", "outcome_dist", "classification_time",
+    "classification_province", "outcome_sex"
   )
 
   chart_name %in% valid_charts
@@ -114,7 +124,19 @@ get_chart_title <- function(chart_name) {
     "province_table" = "Province Statistics",
     "density_curve" = "Age Density Distribution",
     "boxplot" = "Age Distribution Boxplot",
-    "data_table" = "Case Data Table"
+    "data_table" = "Case Data Table",
+    "epi_curve_weekly" = "Weekly Epidemic Curve",
+    "epi_curve_monthly" = "Monthly Epidemic Curve",
+    "cumulative_curve" = "Cumulative Cases",
+    "seasonality_ribbon" = "Seasonality Analysis",
+    "lab_result_bars" = "Lab Results Distribution",
+    "lab_result_pie" = "Lab Results Breakdown",
+    "lab_result_table" = "Lab Results Table",
+    "classification_dist" = "Final Classification Distribution",
+    "outcome_dist" = "Outcome Distribution",
+    "classification_time" = "Classification Over Time",
+    "classification_province" = "Classification by Province",
+    "outcome_sex" = "Outcome by Sex"
   )
 
   titles[[chart_name]] %||% "Dashboard"

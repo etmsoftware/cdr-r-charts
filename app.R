@@ -313,6 +313,9 @@ server <- function(input, output, session) {
   age_analysis_server("standalone", filtered_data)
   geographic_server("standalone", filtered_data, drc_sf)
   analytics_server("standalone", filtered_data)
+  epidemiology_server("standalone", filtered_data)
+  lab_results_server("standalone", filtered_data)
+  classification_server("standalone", filtered_data)
 
   # Full dashboard modules
   overview_server("overview", filtered_data)
