@@ -19,18 +19,6 @@ suppressPackageStartupMessages({
   library(zoo)
 })
 
-has_geo_packages <- FALSE
-tryCatch({
-  suppressPackageStartupMessages({
-    library(sf)
-    library(geodata)
-    library(terra)
-  })
-  has_geo_packages <- TRUE
-}, error = function(e) {
-  message("Geospatial packages not available. Map will be disabled.")
-})
-
 source("R/utils/db_connection.R")
 source("R/utils/data_loader.R")
 source("R/utils/theme_config.R")
@@ -53,21 +41,6 @@ db_pool <- create_db_pool()
 dat <- load_case_data(source = "database", db_pool = db_pool)
 
 filter_opts <- get_filter_options(dat)
-
-drc_sf <- NULL
-if (has_geo_packages) {
-  tryCatch({
-    drc_sf <- geodata::gadm(country = "COD", level = 1, path = tempdir()) %>%
-      st_as_sf() %>%
-      rename(province_gadm = NAME_1) %>%
-      mutate(province_gadm_norm = stringi::stri_trans_general(province_gadm, "Latin-ASCII") %>%
-               str_to_lower() %>%
-               str_replace_all("[^a-z0-9]+", " ") %>%
-               str_squish())
-  }, error = function(e) {
-    message("Could not load DRC shapefile.")
-  })
-}
 
 apply_modern_theme()
 thematic_shiny()
@@ -229,7 +202,6 @@ ui <- function(request) {
           tags$ul(
             tags$li(tags$strong("Framework: "), "Shiny with bslib"),
             tags$li(tags$strong("Visualization: "), "ggplot2 with custom theme"),
-            tags$li(tags$strong("Geospatial: "), "sf, geodata, GADM boundaries"),
             tags$li(tags$strong("Architecture: "), "Modular design with separate modules")
           ),
 
@@ -311,7 +283,7 @@ server <- function(input, output, session) {
   # Call all module servers (they only render if their UI is present)
   overview_server("standalone", filtered_data)
   age_analysis_server("standalone", filtered_data)
-  geographic_server("standalone", filtered_data, drc_sf)
+  geographic_server("standalone", filtered_data)
   analytics_server("standalone", filtered_data)
   epidemiology_server("standalone", filtered_data)
   lab_results_server("standalone", filtered_data)
@@ -320,7 +292,7 @@ server <- function(input, output, session) {
   # Full dashboard modules
   overview_server("overview", filtered_data)
   age_analysis_server("age_analysis", filtered_data)
-  geographic_server("geographic", filtered_data, drc_sf)
+  geographic_server("geographic", filtered_data)
   analytics_server("analytics", filtered_data)
   epidemiology_server("epidemiology", filtered_data)
   lab_results_server("lab_results", filtered_data)

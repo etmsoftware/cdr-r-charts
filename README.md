@@ -181,7 +181,6 @@ PostgreSQL fields are automatically mapped to R data frame:
 ### Visualization & Analysis
 - **ggplot2** - Professional visualizations
 - **tidyverse** - Data manipulation
-- **sf/geodata** - Geospatial mapping
 - **DT** - Interactive tables
 
 ## 🎨 Customization

@@ -43,7 +43,7 @@ is_valid_chart <- function(chart_name) {
     "violin_plot", "age_group_bar", "age_stats",
 
     # Geographic tab
-    "map", "top_provinces", "province_table",
+    "top_provinces", "province_table",
 
     # Analytics tab
     "density_curve", "boxplot", "data_table",
@@ -119,7 +119,6 @@ get_chart_title <- function(chart_name) {
     "violin_plot" = "Age Distribution by Sex",
     "age_group_bar" = "Age Group Distribution",
     "age_stats" = "Age Statistics by Sex",
-    "map" = "Geographic Distribution",
     "top_provinces" = "Top Provinces by Cases",
     "province_table" = "Province Statistics",
     "density_curve" = "Age Density Distribution",

@@ -71,59 +71,56 @@ get_standalone_chart_ui <- function(chart_name, ns = NS("standalone")) {
     # Age Analysis - Stats Table
     "age_stats" = tableOutput(ns("age_stats_table")),
 
-    # Geographic - Map
-    "map" = plotOutput(ns("map_plot"), height = "700px"),
-
     # Geographic - Top Provinces
-    "top_provinces" = plotOutput(ns("top_provinces_plot"), height = "550px"),
+    "top_provinces" = plotOutput(ns("top_provinces_plot"), height = "300px"),
 
     # Geographic - Province Table
     "province_table" = tableOutput(ns("province_stats_table")),
 
     # Analytics - Density Curve
-    "density_curve" = plotOutput(ns("density_plot"), height = "550px"),
+    "density_curve" = plotOutput(ns("density_plot"), height = "300px"),
 
     # Analytics - Boxplot
-    "boxplot" = plotOutput(ns("box_plot"), height = "550px"),
+    "boxplot" = plotOutput(ns("box_plot"), height = "300px"),
 
     # Analytics - Data Table
     "data_table" = DTOutput(ns("detailed_table")),
 
     # Epidemiology - Weekly Epi Curve
-    "epi_curve_weekly" = plotOutput(ns("epi_curve_weekly"), height = "600px"),
+    "epi_curve_weekly" = plotOutput(ns("epi_curve_weekly"), height = "300px"),
 
     # Epidemiology - Monthly Epi Curve
-    "epi_curve_monthly" = plotOutput(ns("epi_curve_monthly"), height = "600px"),
+    "epi_curve_monthly" = plotOutput(ns("epi_curve_monthly"), height = "300px"),
 
     # Epidemiology - Cumulative Curve
-    "cumulative_curve" = plotOutput(ns("cumulative_curve"), height = "600px"),
+    "cumulative_curve" = plotOutput(ns("cumulative_curve"), height = "300px"),
 
     # Epidemiology - Seasonality Ribbon
-    "seasonality_ribbon" = plotOutput(ns("seasonality_ribbon"), height = "600px"),
+    "seasonality_ribbon" = plotOutput(ns("seasonality_ribbon"), height = "300px"),
 
     # Lab Results - Bar Chart
-    "lab_result_bars" = plotOutput(ns("lab_result_bars"), height = "550px"),
+    "lab_result_bars" = plotOutput(ns("lab_result_bars"), height = "300px"),
 
     # Lab Results - Pie Chart
-    "lab_result_pie" = plotOutput(ns("lab_result_pie"), height = "550px"),
+    "lab_result_pie" = plotOutput(ns("lab_result_pie"), height = "300px"),
 
     # Lab Results - Table
     "lab_result_table" = tableOutput(ns("lab_result_table")),
 
     # Classification - Distribution
-    "classification_dist" = plotOutput(ns("classification_dist"), height = "550px"),
+    "classification_dist" = plotOutput(ns("classification_dist"), height = "300px"),
 
     # Classification - Outcome Distribution
-    "outcome_dist" = plotOutput(ns("outcome_dist"), height = "550px"),
+    "outcome_dist" = plotOutput(ns("outcome_dist"), height = "300px"),
 
     # Classification - Time Series
-    "classification_time" = plotOutput(ns("classification_time"), height = "600px"),
+    "classification_time" = plotOutput(ns("classification_time"), height = "300px"),
 
     # Classification - By Province
-    "classification_province" = plotOutput(ns("classification_province"), height = "650px"),
+    "classification_province" = plotOutput(ns("classification_province"), height = "300px"),
 
     # Classification - Outcome by Sex
-    "outcome_sex" = plotOutput(ns("outcome_sex"), height = "550px"),
+    "outcome_sex" = plotOutput(ns("outcome_sex"), height = "300px"),
 
     # Default
     div(

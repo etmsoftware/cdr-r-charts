@@ -6,7 +6,7 @@ default:
     user: "your_username"
     password: "your_password"
     view_name: "v_mpox_drc"
-    pool_size: 5
+    pool_size: 20
 
 development:
   database:
@@ -16,7 +16,7 @@ development:
     user: !expr Sys.getenv("DB_USER", "postgres")
     password: !expr Sys.getenv("DB_PASSWORD")
     view_name: "v_mpox_drc"
-    pool_size: 5
+    pool_size: 20
 
 production:
   database:
@@ -26,4 +26,4 @@ production:
     user: !expr Sys.getenv("DB_USER")
     password: !expr Sys.getenv("DB_PASSWORD")
     view_name: "v_mpox_drc"
-    pool_size: 10
+    pool_size: 20
